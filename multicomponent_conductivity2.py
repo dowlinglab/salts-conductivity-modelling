@@ -9,8 +9,8 @@ import pandas as pd
 
 
 # MSA transport model for double salts specific conductivity
-def msa_conductivity_model(valency, diameters, diff_coeff, T, sensor_voltage,
-                           probe_distance, eta, epsilon, cond_exp, salt_1_conc, salt_2_conc=None):
+def msa_conductivity_model(valency, diameters, diff_coeff, T, sensor_voltage, probe_distance, eta, epsilon,
+                           cond_exp, salt_1_conc, salt_2_conc=None):
     """Calculates specific conductivity of double salts solution
 
     Argument:
