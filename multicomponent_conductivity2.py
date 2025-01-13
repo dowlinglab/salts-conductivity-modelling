@@ -45,7 +45,7 @@ def msa_conductivity_model(salt_1_conc, salt_2_conc, cond_exp, valency, diameter
     ion_charge = [valency[i] * charge for i in range(len(valency))]
 
     # converting molar concentrations to number density
-    if salt_2_conc == None:
+    if salt_2_conc is None:
         number_density_salt_1 = [salt_1_conc[i] * Avogadros_num for i in range(ndata)]
 
         # valency of cation
@@ -73,7 +73,7 @@ def msa_conductivity_model(salt_1_conc, salt_2_conc, cond_exp, valency, diameter
 
     # for mixture concentration (row) in data
     for n in range(ndata):
-        if salt_2_conc == None:
+        if salt_2_conc is None:
             # number density of species
             n_cat = number_density_cat_1[n]
             n_an = number_density_an[n]
@@ -176,7 +176,7 @@ def msa_conductivity_model(salt_1_conc, salt_2_conc, cond_exp, valency, diameter
         # since alpha is scaled by omega_bar, the bounds (omega), need to be scaled by same factor
         omega_scaled = np.zeros(n_species)
 
-        if salt_2_conc == None:
+        if salt_2_conc is None:
             for k in range(n_species):
                 if k == 0:
                     omega_scaled[k] = omega[k] / omega_bar
