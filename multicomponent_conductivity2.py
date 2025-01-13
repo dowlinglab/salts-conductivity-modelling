@@ -9,28 +9,31 @@ import pandas as pd
 
 
 # MSA transport model for double salts specific conductivity
-def msa_conductivity_model(salt_1_conc, salt_2_conc, cond_exp, valency, diameters, diff_coeff, T, sensor_voltage,
-                           probe_distance, Avogadros_num, k_B, charge, eta, epsilon, epsilon_0):
+def msa_conductivity_model(valency, diameters, diff_coeff, T, sensor_voltage,
+                           probe_distance, eta, epsilon, cond_exp, salt_1_conc, salt_2_conc=None):
     """Calculates specific conductivity of double salts solution
 
     Argument:
-        salt_1_conc = concentration of salt 1 from data in mM
-        salt_2_conc = concentration of salt 2 from data in mM
         valency: list of the valency of ions with cations listed before anions in decreasing order
         diameters: list of the corresponding hard sphere diameter of ions in m
         diff_coeff: list of the corresponding diffusion coefficient at infinite dilution of ions in m^2/s
         T: temperature in K
         sensor_voltage: sensor measuring voltage in V
         probe_distance: distance between probes in m
-        Avogadros_num: Avogadro constant
-        k_B: Boltzmann constant in J/K
-        charge: elementary charge in C
         eta: viscosity in Pa.s
         epsilon: relative permittivity
-        epsilon_0: permittivity of free space in F/m
+        salt_1_conc = concentration of salt 1 from data in mM (Pandas series or list)
+        salt_2_conc = concentration of salt 2 from data in mM (Pandas series or list)
+        cond_exp: conductivity of solution from data in micro.S/cm (Pandas series or list)
 
     Returns:
         all_cond_calc_con: specific conductivity in micro.S/cm"""
+
+    # constants
+    Avogadros_num = 6.022*10**23 # Avogadro's constant
+    k_B = 1.381 * 10**(-23) # Boltzmann constant in J/K
+    charge = 1.602 * 10**(-19) # elementary charge in C
+    epsilon_0 = 8.854 * 10**(-12) # permittivity of free space in F/m
 
     # electric field
     E_field = sensor_voltage/probe_distance
