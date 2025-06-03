@@ -214,7 +214,7 @@ def msa_transport(valency, diameters, diff_coeff, T, sensor_voltage, probe_dista
             mew[a] = number_density[a] * ion_charge[a] ** 2 / sum(
                 number_density[j] * ion_charge[j] ** 2 for j in range(n_species))
 
-        # calculate kappa from equation (5)
+        # calculate the Debye length from equation (5)
         kappa = math.sqrt(
             sum(number_density[l] * ion_charge[l] ** 2 / (epsilon * epsilon_0 * k_B * T) for l in range(n_species)))
 
