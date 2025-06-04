@@ -182,11 +182,9 @@ def msa_transport(valency, diameters, diff_coeff, T, sensor_voltage, probe_dista
         number_density_an = [valency_cation_1 * number_density_salt_1[i] + valency_cation_2 * number_density_salt_2[i]
                              + valency_cation_3 * number_density_salt_3[i] for i in range(ndata)]
 
-    # conductivity
+    # calculate the bulk conductivity of the salt solution
     all_cond_calc = np.zeros(ndata)
-
-    # for mixture concentration (row) in data
-    for n in range(ndata):
+    for n in range(ndata): # loop through the salts concentration
         if salt_2_conc is None and salt_3_conc is None:
             # number density of species
             n_cat = number_density_cat_1[n]
@@ -225,9 +223,6 @@ def msa_transport(valency, diameters, diff_coeff, T, sensor_voltage, probe_dista
         transport_num = np.zeros(n_species)
         for j in range(n_species):
             transport_num[j] = mew[j] * omega[j] / omega_bar
-
-        # conductivity of species from equation (1)
-        cond_species = np.zeros(n_species)
 
         # calculate delta from equation (21)
         delta = 1 - ((math.pi / 6) * sum(number_density[k] * diameters[k] ** 3 for k in range(n_species)))
@@ -337,6 +332,9 @@ def msa_transport(valency, diameters, diff_coeff, T, sensor_voltage, probe_dista
             # update the ksi matrix
             for p in range(n_species):
                 ksi[i][p] = N[p] * omega[i] / (omega[i] ** 2 - alphas[p] ** 2)
+
+        # conductivity of species from equation (1)
+        cond_species = np.zeros(n_species)
 
         # calculate the relaxation correction from equation (4)
         delta_k_divide_k = np.zeros(n_species)
