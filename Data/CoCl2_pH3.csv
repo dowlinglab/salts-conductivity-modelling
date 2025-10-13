@@ -1,4 +1,4 @@
-﻿Time (s),Mass (g),Pressure (psi),Retentate Temp,Retentate Cond @ Temp (uS/cm),Permeate Temp,Permeate Cond @ Temp (uS/cm),Vial Swap,ICP-OES Concentration (mM),Observed Sample pH,H+ Concentration,Retentate Concentration (mM),Permeate Concentration (mM),,,Intial feed pH ,3.00
+﻿Time (s),Mass (g),Pressure (psi),Retentate Temp,Retentate Cond @ Temp (uS/cm),Permeate Temp,Permeate Cond @ Temp (uS/cm),Vial Swap,ICP-OES Concentration (mM),Observed Sample pH,H+ Concentration,Retentate Concentration (mM),Permeate Concentration (mM),,,Intial feed pH ,3
 3.985,0.03,,23.03,759.61,19.62,24.46,0,,,,1.146253926,0,,,Final Feed pH ,3.94
 14.242,0.02,3.293,23.03,760.34,19.61,24.78,0,,,,1.15034769,0,,,Diafiltrate pH,3.03
 24.21,,8.244,23.03,760.24,19.55,24.97,0,,,,1.1497869,0,,,Diafiltrate concentration,50mM
@@ -4031,7 +4031,7 @@
 38480.884,14.44,56.363,23.33,11052.92,19.98,2890.61,0,,,,58.87006505,13.09668013,,,,
 38490.851,14.44,56.364,23.33,11055.67,19.99,2885.58,0,,,,58.88548677,13.06847241,,,,
 38499.824,14.44,56.365,23.33,11057.88,19.99,2863.02,0,,,,58.89788022,12.94195828,,,,
-38508.911,14.44,56.365,23.33,11058.15,19.98,2890.35,0,11.72702,3.27,0.53703,58.89939435,13.09522207,,,,
+38508.911,14.44,56.365,23.33,11058.15,19.98,2890.35,0,14.72702,3.27,0.53703,58.89939435,13.09522207,,,,
 38518.873,14.44,56.364,23.33,11058.75,19.99,2874.22,0,,,,58.90275908,13.00476671,,,,
 38528.854,14.44,56.366,23.33,11054.76,19.99,2889.69,0,,,,58.88038358,13.09152086,,,,
 38537.833,14.44,56.366,23.33,11058.54,19.99,2883.48,0,,,,58.90158143,13.05669583,,,,
