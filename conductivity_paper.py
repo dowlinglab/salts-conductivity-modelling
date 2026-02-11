@@ -8,28 +8,38 @@ from scipy.optimize import fsolve, bisect
 import pandas as pd
 
 
-# Shedlovsky model for electrolyte equivalent conductivity
+# Shedlovsky model for predicting the equivalent conductivity of salt (or ionic) solutions
 def _shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation, lambda_0_anion):
     """
-    Calculates equivalent conductivity using equation (7.36) in reference
+    Calculates equivalent conductivity of ionic solutions
 
-    Arguments:
-        conc: list of the salt concentration in M
-        temp: integer or float value of the temperature in K
-        epsilon: integer or float value of the dielectric constant
-        eta: integer or float value of the viscosity of the salt solution in poise
-        lambda_0: integer or float value of the limiting equivalent conductivity of
-                the salt in cm^2.S/equiv
-        a: integer or float value of the distance within which no other ions can penetrate in cm
-        z_1: integer value of the valency of the cation
-        z_2: integer value of the valency of the anion
-        lambda_0_cation: integer or float value of the limiting equivalent conductivity of
-                        the cation in cm^2.S/equiv
-        lambda_0_anion: integer or float value of the limiting equivalent conductivity of
-                        the anion in cm^2.S/equiv
+    Parameters
+    ----------
+    conc: list or Pandas series
+        A list or Pandas series containing the concentrations of the salt in M
+    temp: int or float
+        Temperature of the solution in K
+    epsilon: int or float
+        Dielectric constant of the solvent
+    eta: int or float
+        Viscosity of the solvent in poise
+    lambda_0: int or float
+        Limiting equivalent conductivity of the salt in cm^2.S/equiv
+    a: int or float
+        Distance of closest approach of ions in cm
+    z_1: int
+        Valency of the cation
+    z_2: int
+        Valency of the anion
+    lambda_0_cation: int or float
+        Limiting equivalent conductivity of the cation in cm^2.S/equiv
+    lambda_0_anion: int or float
+        Limiting equivalent conductivity of the anion in cm^2.S/equiv
 
-    Returns:
-        equiv_cond: equivalent conductivity of the salt in cm^2.S/equiv
+    Returns
+    -------
+    equiv_cond: list
+        A list containing the equivalent conductivity of the solution at various salt concentrations in cm^2.S/equiv
     """
     # calculate the B and q constants
     B = 50.29 * (10 ** 8) * (epsilon * temp) ** (-0.5)
@@ -59,28 +69,38 @@ def _shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation
     return equiv_cond
 
 
-# variant Shedlovsky model for predicting electrolyte specific conductivity
+# variant Shedlovsky model for predicting the specific conductivity of salt (or ionic) solutions
 def variant_shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation, lambda_0_anion):
     """
     Calculates specific conductivity from equivalent conductivity
 
-    Arguments:
-        conc: list of the salt concentration in M
-        temp: integer or float value of the temperature in K
-        epsilon:integer or float value of the dielectric constant
-        eta: integer or float value of the viscosity of the salt solution in poise
-        lambda_0: integer or float value of the limiting equivalent conductivity of
-                the salt in cm^2.S/equiv
-        a: integer or float value of the distance within which no other ions can penetrate in cm
-        z_1: integer value of the valency of the cation
-        z_2: integer value of the valency of the anion
-        lambda_0_cation: integer or float value of the limiting equivalent conductivity of
-                        the cation in cm^2.S/equiv
-        lambda_0_anion: integer or float value of the limiting equivalent conductivity of
-                        the anion in cm^2.S/equiv
+    Parameters
+    ----------
+    conc: list or Pandas series
+        A list or Pandas series containing the concentrations of the salt in M
+    temp: int or float
+        Temperature of the solution in K
+    epsilon: int or float
+        Dielectric constant of the solvent
+    eta: int or float
+        Viscosity of the solvent in poise
+    lambda_0: int or float
+        Limiting equivalent conductivity of the salt in cm^2.S/equiv
+    a: int or float
+        Distance of closest approach of ions in cm
+    z_1: int
+        Valency of the cation
+    z_2: int
+        Valency of the anion
+    lambda_0_cation: int or float
+        Limiting equivalent conductivity of the cation in cm^2.S/equiv
+    lambda_0_anion: int or float
+        Limiting equivalent conductivity of the anion in cm^2.S/equiv
 
-    Returns:
-        specific_cond_calc: specific conductivity of the salt in micro.S/cm
+    Returns
+    -------
+    specific_cond_calc: list
+        A list containing the specific conductivity of the solution at various salt concentrations in milli.S/cm
     """
 
     # calculate the salt equivalent conductivity
@@ -97,33 +117,44 @@ def variant_shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0
     for i in range(len(conc)):
         specific_cond.append((equiv_conc[i] / 1000) * equiv_cond[i])
 
-    # specific conductivity in milli Siemen per cm
+    # specific conductivity in milli.S/cm
     specific_cond_calc = [specific_cond[i] * 10 ** 3 for i in range(len(conc))]
 
     return specific_cond_calc
 
 
-# Mean spherical approximation (MSA) transport model for multi-salt specific conductivity
+# Mean spherical approximation (MSA) model for multi-salt specific conductivity predictions
 def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
                   salt_1_conc, salt_2_conc=None, salt_3_conc=None):
-    """Calculates the specific conductivity of single-salt, two-salt, and three-salt solutions
+    """Calculates the specific conductivity of single, binary, and ternary salt solutions
 
-    Argument:
-        valency: list of the valency of ions in decreasing order
-        diameters: list of the corresponding hard sphere diameter of the ions in m
-        diff_coeff: list of the corresponding diffusion coefficient of the ions at infinite dilution in m^2/s
-        temp: integer or float value of the temperature in K
-        sensor_voltage: integer or float value of the sensor measuring voltage in V
-        probe_distance: integer or float value of the distance between the probes in m
-        eta: integer or float value of the viscosity in Pa.s
-        epsilon: integer or float value of the relative permittivity
-        lambda_0: list of the limiting equivalent conductivity of the ions in S.m^2/mol
-        salt_1_conc = Pandas series or list of the concentration of salt 1 in mM
-        salt_2_conc = Pandas series or list of the concentration of salt 2 in mM
-        salt_3_conc = Pandas series or list of the concentration of salt 3 in mM
+    Parameters
+    ----------
+    valency: list
+        A list of the valency of ions in decreasing order
+    diameters: list
+        A list of the corresponding hard sphere diameter of the ions in m
+    diff_coeff: list
+        A list of the corresponding diffusion coefficient of the ions at infinite dilution in m^2/s
+    temp: int or float
+        Temperature of the solutions in K
+    eta: int or float
+        Viscosity of the solvent in Pa.s
+    epsilon: int or float
+        Relative permittivity of the solvent
+    lambda_0: list
+        A list of the limiting molar conductivity of the ions in S.m^2/mol
+    salt_1_conc: Pandas series or list
+        A list or Pandas series containing the concentrations of salt 1 in mM
+    salt_2_conc: Pandas series or list
+        A list or Pandas series containing the concentrations of salt 2 in mM
+    salt_3_conc: Pandas series or list
+        A list or Pandas series containing the concentrations of salt 3 in mM
 
-    Returns:
-        all_cond_calc_con: specific conductivity of the salt solution in micro.S/cm"""
+    Returns
+    -------
+    cond_calc_con: list
+        A list containing the specific conductivity of the solution at various salt concentrations in milli.S/cm"""
 
     # constants
     Avogadros_num = 6.022 * 10 ** 23  # Avogadro's constant
@@ -328,7 +359,7 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
             cond_species[i] = (charge ** 2) * number_density[i] * diff_coeff[i] * (valency[i] ** 2) * (
                     1 + delta_vel_divide_vel[i]) * (1 + delta_k_divide_k[i]) / (k_B * temp)
 
-        # calculate the bulk conductivity of the solution
+        # calculate the bulk conductivity of the solution in S/m
         all_cond_calc[n] = sum(cond_species)
 
     # convert the calculated conductivity from S/m to milli.S/cm
