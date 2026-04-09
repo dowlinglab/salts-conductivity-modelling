@@ -8,10 +8,10 @@ from scipy.optimize import fsolve, bisect
 import pandas as pd
 
 
-# Shedlovsky model for predicting the equivalent conductivity of salt (or ionic) solutions
-def _shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation, lambda_0_anion):
+# Shedlovsky model for predicting the equivalent conductivity of single salt solutions
+def _equivalent_conductivity(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation, lambda_0_anion):
     """
-    Calculates equivalent conductivity of ionic solutions
+    Calculates the equivalent conductivity of single salt solutions
 
     Parameters
     ----------
@@ -39,18 +39,18 @@ def _shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation
     Returns
     -------
     equiv_cond: list
-        A list containing the equivalent conductivity of the solution at various salt concentrations in cm^2.S/equiv
+        A list containing the equivalent conductivity in cm^2.S/equiv at various salt concentrations
     """
     # calculate the B and q constants
     B = 50.29 * (10 ** 8) * (epsilon * temp) ** (-0.5)
     q = np.abs(z_1 * z_2) * (lambda_0_cation + lambda_0_anion) / (
                 (np.abs(z_1) + np.abs(z_2)) * (np.abs(z_2) * lambda_0_cation + np.abs(z_1) * lambda_0_anion))
 
-    # calculate the relaxation correction, B1, and the hydrodynamic correction, B2
+    # compute the relaxation (B1) and the electrophoretic (B2) terms
     B_1 = 2.801 * 10 ** 6 * np.abs(z_1 * z_2) * q / ((epsilon * temp) ** (3 / 2) * (1 + math.sqrt(q)))
     B_2 = 41.25 * (np.abs(z_1) + np.abs(z_2)) / (eta * (epsilon * temp) ** (1 / 2))
 
-    # ion concentration
+    # calculate the concentration of ionic species
     cation_conc = conc
     Cl_conc = [np.abs(z_1) * conc[i] for i in range(len(conc))]
 
@@ -61,7 +61,7 @@ def _shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation
         z = [z_1, z_2]
         I[i] = 1 / 2 * (sum(conc_all[j] * z[j] ** 2 for j in range(len(conc_all))))
 
-    # calculate the salt equivalent conductivity
+    # calculate the equivalent conductivity of the salt solution
     equiv_cond = []
     for i in range(len(conc)):
         equiv_cond.append(lambda_0 - ((B_1 * lambda_0 + B_2) * math.sqrt(I[i]) / (1 + a * B * math.sqrt(I[i]))))
@@ -69,10 +69,10 @@ def _shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation
     return equiv_cond
 
 
-# variant Shedlovsky model for predicting the specific conductivity of salt (or ionic) solutions
-def variant_shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation, lambda_0_anion):
+# Shedlovsky model for predicting the conductivity of single salt solutions
+def shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation, lambda_0_anion):
     """
-    Calculates specific conductivity from equivalent conductivity
+    Calculates the conductivity of single salt solutions
 
     Parameters
     ----------
@@ -100,33 +100,34 @@ def variant_shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0
     Returns
     -------
     specific_cond_calc: list
-        A list containing the specific conductivity of the solution at various salt concentrations in micro.S/cm
+        A list containing the conductivity in milli.S/cm at various salt concentrations
     """
 
-    # calculate the salt equivalent conductivity
-    equiv_cond = _shedlovsky(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2, lambda_0_cation, lambda_0_anion)
+    # calculate the equivalent conductivity of the salt solution
+    equiv_cond = _equivalent_conductivity(conc, temp, epsilon, eta, lambda_0, a, z_1, z_2,
+                                          lambda_0_cation, lambda_0_anion)
 
-    # cation concentration
+    # calculate the cation concentration
     cation_conc = conc
 
-    # convert the cation concentrations from M to equivalent per litre
+    # convert the cation concentrations from M (mol/L) to N (equiv/L)
     equiv_conc = [cation_conc[i] * np.abs(z_1) for i in range(len(conc))]
 
-    # calculate the salt specific conductivity in Siemen per cm
+    # calculate the conductivity of the salt solution in S/cm
     specific_cond = []
     for i in range(len(conc)):
         specific_cond.append((equiv_conc[i] / 1000) * equiv_cond[i])
 
-    # specific conductivity in micro Siemen per cm
-    specific_cond_calc = [specific_cond[i] * 10 ** 6 for i in range(len(conc))]
+    # convert the conductivity to milli.S/cm
+    specific_cond_calc = [specific_cond[i] * 10 ** 3 for i in range(len(conc))]
 
     return specific_cond_calc
 
 
-# Mean spherical approximation (MSA) model for multi-salt specific conductivity predictions
-def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
+# Mean spherical approximation (MSA) model for multi-salt conductivity predictions
+def msa(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
                   salt_1_conc, salt_2_conc=None, salt_3_conc=None):
-    """Calculates the specific conductivity of single, binary, and ternary salt solutions
+    """Calculates the conductivity of single, binary, and ternary salt solutions
 
     Parameters
     ----------
@@ -154,7 +155,7 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
     Returns
     -------
     cond_calc_con: list
-        A list containing the specific conductivity of the solution at various salt concentrations in micro.S/cm"""
+        A list containing the conductivity in milli.S/cm at various salt concentrations"""
 
     # constants
     Avogadros_num = 6.022 * 10 ** 23  # Avogadro's constant
@@ -166,20 +167,20 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
     # number of data points
     ndata = len(salt_1_conc)
 
-    # number of species
+    # number of ionic species
     n_species = len(valency)
 
-    # species charge
+    # charge of ionic species
     ion_charge = [valency[i] * charge for i in range(len(valency))]
 
-    # converting molar concentrations to number density
+    # converting molar concentration of salts to number density
     if salt_2_conc is None and salt_3_conc is None:
         number_density_salt_1 = [salt_1_conc[i] * Avogadros_num for i in range(ndata)]
 
         # valency of cation
         valency_cation = valency[0]
 
-        # evaluating the number density of individual species
+        # evaluating the number density of individual ionic species
         number_density_cat_1 = number_density_salt_1
         number_density_an = [valency_cation * number_density_salt_1[i] for i in range(ndata)]
     elif salt_2_conc is not None and salt_3_conc is None:
@@ -190,7 +191,7 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
         valency_cation_1 = valency[0]
         valency_cation_2 = valency[1]
 
-        # evaluating the number density of individual species
+        # evaluating the number density of individual ionic species
         number_density_cat_1 = number_density_salt_1
         number_density_cat_2 = number_density_salt_2
         number_density_an = [valency_cation_1 * number_density_salt_1[i] + valency_cation_2 * number_density_salt_2[i]
@@ -205,7 +206,7 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
         valency_cation_2 = valency[1]
         valency_cation_3 = valency[2]
 
-        # evaluating the number density of individual species
+        # evaluating the number density of individual ionic species
         number_density_cat_1 = number_density_salt_1
         number_density_cat_2 = number_density_salt_2
         number_density_cat_3 = number_density_salt_3
@@ -214,27 +215,25 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
 
     # calculate the bulk conductivity of the salt solution
     all_cond_calc = np.zeros(ndata)
-    for n in range(ndata):  # loop through the salts concentration
+    for n in range(ndata):  # loop through the data points
         if salt_2_conc is None and salt_3_conc is None:
-            # number density of species
+            # list of the number density of ionic species
             n_cat = number_density_cat_1[n]
             n_an = number_density_an[n]
             number_density = [n_cat, n_an]
         elif salt_2_conc is not None and salt_3_conc is None:
-            # number density of species
             n_cat_1 = number_density_cat_1[n]
             n_cat_2 = number_density_cat_2[n]
             n_an = number_density_an[n]
             number_density = [n_cat_1, n_cat_2, n_an]
         else:
-            # number density of species
             n_cat_1 = number_density_cat_1[n]
             n_cat_2 = number_density_cat_2[n]
             n_cat_3 = number_density_cat_3[n]
             n_an = number_density_an[n]
             number_density = [n_cat_1, n_cat_2, n_cat_3, n_an]
 
-        # calculate the species ionic mobility (omega) and the relative ionic strength (mew)
+        # calculate the ionic mobility (omega) and relative ionic strength (mew) of all species
         omega = np.zeros(n_species)
         mew = np.zeros(n_species)
         for a in range(n_species):
@@ -242,29 +241,29 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
             mew[a] = number_density[a] * ion_charge[a] ** 2 / sum(
                 number_density[j] * ion_charge[j] ** 2 for j in range(n_species))
 
-        # calculate the Debye length from equation (5)
+        # calculate the Debye length
         kappa = math.sqrt(
             sum(number_density[l] * ion_charge[l] ** 2 / (epsilon * epsilon_0 * k_B * temp) for l in range(n_species)))
 
-        # calculate the mean mobility from equation (7)
+        # calculate the average mobility of all species
         omega_bar = sum(mew[j] * omega[j] for j in range(n_species))
 
-        # calculate the transport number of all species from equation (8)
+        # calculate the transport number of all species
         transport_num = np.zeros(n_species)
         for j in range(n_species):
             transport_num[j] = mew[j] * omega[j] / omega_bar
 
-        # calculate the value of alpha from the function containing alpha
+        # calculate the value of alpha from the equation containing alpha
         alpha_scaled = np.zeros(n_species)
         def func_alpha(alpha_scaled):
             """
-            Evaluates residuals of equation 12
+            Evaluates residuals of the equation containing alpha
 
             Arguments:
                 alpha_scaled = alpha/omega_bar
 
             Returns:
-                residual of equation 12
+                residual of the equation containing alpha
             """
             return ((alpha_scaled) * sum(
                 transport_num[k] / ((omega[k] / omega_bar) ** 2 - (alpha_scaled) ** 2) for k in range(n_species)))
@@ -292,13 +291,13 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
             N[p] = math.sqrt(1 / sum(
                 transport_num[r] * omega[r] ** 2 / (omega[r] ** 2 - alphas[p] ** 2) ** 2 for r in range(n_species)))
 
-        # ksi matrix
-        ksi = np.zeros((n_species, n_species))
+        # compute the zeta matrix
+        zeta = np.zeros((n_species, n_species))
 
-        # calculate the hydrodynamic correction
+        # calculate the electrophoretic correction
         delta_vel_divide_vel = np.zeros(n_species)
         for i in range(n_species):
-            # update the hydrodynamic correction; equation (16) divide equation (2)
+            # update the electrophoretic correction
             prefactor = -(Faraday ** 2) * np.abs(valency[i]) / (
                         12 * math.pi * epsilon_0 * epsilon * eta * k_B * temp * Avogadros_num * lambda_0[i])
             delta_vel_divide_vel[i] = prefactor * sum(number_density[j] * ion_charge[j] ** 2 *
@@ -310,11 +309,11 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
                                                                     kappa * (1 + kappa * diameters[j]))))
                                                       for j in range(n_species))
 
-            # update the ksi matrix
+            # update the zeta matrix
             for p in range(n_species):
-                ksi[i][p] = N[p] * omega[i] / (omega[i] ** 2 - alphas[p] ** 2)
+                zeta[i][p] = N[p] * omega[i] / (omega[i] ** 2 - alphas[p] ** 2)
 
-        # calculate the conductivity of the species
+        # calculate the conductivity of all ionic species
         cond_species = np.zeros(n_species)
 
         # calculate the relaxation correction
@@ -329,7 +328,7 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
                         sigma_aj = 0.5 * (diameters[a] + diameters[j])
 
                         # first fraction of summation term
-                        term1 = transport_num[j] * ksi[j][p] * mew[a] * (
+                        term1 = transport_num[j] * zeta[j][p] * mew[a] * (
                                 ion_charge[a] * omega[a] - ion_charge[j] * omega[j]) / (
                                         ion_charge[a] * ion_charge[j] * (omega[a] + omega[j]))
 
@@ -350,28 +349,28 @@ def msa_transport(valency, diameters, diff_coeff, temp, eta, epsilon, lambda_0,
 
                         inner_delta_k_divide_k_sum += term1 * term2 * integral
 
-                delta_k_divide_k_sum += ksi[i][p] * inner_delta_k_divide_k_sum
+                delta_k_divide_k_sum += zeta[i][p] * inner_delta_k_divide_k_sum
 
             # update the relaxation correction
             delta_k_divide_k[i] = -(kappa ** 2) * ion_charge[i] * delta_k_divide_k_sum / 3
 
-            # update the conductivity of the species
+            # update the conductivity of all ionic species
             cond_species[i] = (charge ** 2) * number_density[i] * diff_coeff[i] * (valency[i] ** 2) * (
                     1 + delta_vel_divide_vel[i]) * (1 + delta_k_divide_k[i]) / (k_B * temp)
 
-        # calculate the bulk conductivity of the solution in S/m
+        # compute the bulk conductivity of the salt solution in S/m
         all_cond_calc[n] = sum(cond_species)
 
-    # convert the calculated conductivity from S/m to micro.S/cm
-    cond_calc_con = [all_cond_calc[i] * 10 ** 6 / 100 for i in range(ndata)]
+    # convert the conductivity to milli.S/cm
+    cond_calc_con = [all_cond_calc[i] * 10 ** 3 / 100 for i in range(ndata)]
 
     print(f"Relaxation correction: {delta_k_divide_k}")
     print(f"Hydrodynamic correction: {delta_vel_divide_vel}")
-    print(f"omega_bar: {omega_bar}")
-    print(f"Alpha: {alphas}")
-    print(f"Mew: {mew}")
+    print(f"Relative ionic strength: {mew}")
     print(f"Transport number: {transport_num}")
-    print(f"Omega: {omega}")
-    print(f"ksi: {ksi}")
+    print(f"Ionic mobility: {omega}")
+    print(f"Average mobility: {omega_bar}")
+    print(f"Alpha: {alphas}")
+    print(f"zeta matrix: {zeta}")
 
     return cond_calc_con
