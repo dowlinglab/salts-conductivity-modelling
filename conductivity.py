@@ -1,11 +1,7 @@
 # importing packages
-import pyomo.environ as pyo
 import numpy as np
-from matplotlib import pyplot as plt
 import math
-import scipy.stats as stats
-from scipy.optimize import fsolve, bisect
-import pandas as pd
+from scipy.optimize import bisect
 
 
 # Shedlovsky model for predicting the equivalent conductivity of single salt solutions
