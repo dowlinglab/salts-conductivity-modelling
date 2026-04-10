@@ -13,7 +13,7 @@ estimates of the soft sensors in the second case study are in the `soft_sensor_m
 `Li_Co` folder. 
 
 `conductivity.py` holds the Shedlovsky and mean spherical approximation models for conductivity predictions. The codes were run on 
-Python 3.10.14.
+Python 3.10.14. Conductivity sensor calibration is performed `probe_calibration.ipynb`.
 
 The following section describes how to set up an environment capable of solving these problems.
 
