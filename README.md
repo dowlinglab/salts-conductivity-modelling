@@ -6,11 +6,11 @@ derived from cathode ray tube and organic light-emitting diode devices and (2) r
 permeate outlet of a membrane-based separation for the recovery of cobalt ions from an acidic solution representative of lithium-ion 
 battery leachate.
 
-The data used in both case studies are stored in the `Data` and `Raw_data`. The soft sensors conductivity prediction in the first case
-case study are in the `single_salt_conductivity.ipynb`, `binary_salt_conductivity.ipynb`, and `ternary_salt_experiments.ipynb` files, 
-with figures stored in the `Single_salt`, `Binary_salts`, and `Ternary_salts` folder, respectively. Lastly, the ion concentration 
-estimates of the soft sensors are stored in the `soft_sensor_membrane_sep.ipynb` file, with the figures saved in the `Li_Co` 
-folder. 
+The data used in both case studies are stored in the `Data` and `Raw_data` folders. The soft sensors conductivity prediction for the 
+first case case study are in the `single_salt_conductivity.ipynb`, `binary_salt_conductivity.ipynb`, and `ternary_salt_experiments.ipynb` 
+files, with figures stored in the `Single_salt`, `Binary_salts`, and `Ternary_salts` folders, respectively. Lastly, the ion concentration 
+estimates of the soft sensors in the second case study are in the `soft_sensor_membrane_sep.ipynb` file, with the figures stored in the 
+`Li_Co` folder. 
 
 The codes were run on Python 3.10.14.
 
@@ -24,8 +24,8 @@ The following section describes how to set up an environment capable of solving 
 pip install numpy pandas
 ```
 
-2.  Install ``matplotlib`` and ``scipy``: 
+2.  Install ``matplotlib``, ``scipy``, and ``mpl_toolkits``: 
 
 ```
-pip install scipy matplotlib
+pip install scipy matplotlib mpl_toolkits
 ```
