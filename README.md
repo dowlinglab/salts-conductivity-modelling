@@ -12,7 +12,8 @@ files, with figures stored in the `Single_salt`, `Binary_salts`, and `Ternary_sa
 estimates of the soft sensors in the second case study are in the `soft_sensor_membrane_sep.ipynb` file, with the figures stored in the 
 `Li_Co` folder. 
 
-The codes were run on Python 3.10.14.
+`conductivity.py` holds the Shedlovsky and mean spherical approximation models for conductivity predictions. The codes were run on 
+Python 3.10.14.
 
 The following section describes how to set up an environment capable of solving these problems.
 
