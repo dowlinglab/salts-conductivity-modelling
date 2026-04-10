@@ -17,3 +17,15 @@ The codes were run on Python 3.10.14.
 The following section describes how to set up an environment capable of solving these problems.
 
 ## Making a Python environment
+
+1.  Install NumPy and Pandas with your preferred package manager. You may install NumPy and Pandas with, for example, ``pip``:
+
+```
+pip install numpy pandas
+```
+
+2.  Install ``matplotlib`` and ``scipy``: 
+
+```
+pip install scipy matplotlib
+```
