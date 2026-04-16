@@ -7,13 +7,13 @@ permeate outlet of a membrane-based separation for the recovery of cobalt ions f
 battery leachate.
 
 The data used in both case studies are stored in the `Data` and `Raw_data` folders. The soft sensors conductivity prediction for the 
-first case case study are in the `single_salt_conductivity.ipynb`, `binary_salt_conductivity.ipynb`, and `ternary_salt_experiments.ipynb` 
+first case study are in the `single_salt_conductivity.ipynb`, `binary_salt_conductivity.ipynb`, and `ternary_salt_experiments.ipynb` 
 files, with figures stored in the `Single_salt`, `Binary_salts`, and `Ternary_salts` folders, respectively. Lastly, the ion concentration 
 estimates of the soft sensors in the second case study are in the `soft_sensor_membrane_sep.ipynb` file, with the figures stored in the 
 `Li_Co` folder. 
 
 `conductivity.py` holds the Shedlovsky and mean spherical approximation models for conductivity predictions. The codes were run on 
-Python 3.10.14. Conductivity sensor calibration is performed `probe_calibration.ipynb`.
+Python 3.10.14. Conductivity sensor calibration is performed in the `probe_calibration.ipynb` file.
 
 The following section describes how to set up an environment capable of solving these problems.
 
