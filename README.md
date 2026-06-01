@@ -1,7 +1,10 @@
 # Concentration Soft Sensors Paper
 
 This repository holds the conductivity models and case studies used to develop soft sensors for estimating real-time ion concentrations 
-in aqueous solutions. The soft sensor is applied to two case studies: (1) conductivity predictions in electronic waste leachates
+in aqueous solutions. The paper pre-print is available on ChemRxiv: 
+[Soft Sensors Enable Real-Time Ion Concentration Measurements](https://chemrxiv.org/doi/full/10.26434/chemrxiv.15002541/v1).
+
+The soft sensor is applied to two case studies: (1) conductivity predictions in electronic waste leachates
 derived from cathode ray tube and organic light-emitting diode devices and (2) real-time estimation of ion concentrations in the 
 permeate outlet of a membrane-based separation for the recovery of cobalt ions from an acidic solution representative of lithium-ion 
 battery leachate.
