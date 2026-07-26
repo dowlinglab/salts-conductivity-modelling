@@ -187,6 +187,13 @@ def msa(
      to only four salts. It is also limited to salt solutions containing
      a common/shared monovalent anion, e.g., chloride ions
 
+     Note: If the solution is acidic (i.e., one of the salts contain
+     hydrogen ion), the concentration of the salt containing the
+     hydrogen ion should be supplied last. Additionally, the hydrogen ion
+     valency, diameter, diffusion coefficient, and limiting molar
+     conductivity should be placed in the last entry after arranging the
+     values of other ions in decreasing order of valency
+
     Parameters
     ----------
     valency: list
@@ -414,8 +421,8 @@ def msa(
                         "argument (propagated to other arguments as well) violates "
                         "the mobility constraints. If hydrogen ion is present in the "
                         "solution, place its valency, diameter, diffusion coefficient, "
-                        "and limiting molar conductivity in the last position after "
-                        "arranging the values of the other ions in decreasing order of "
+                        "and limiting molar conductivity in the last entry after "
+                        "arranging the values of other ions in decreasing order of "
                         "valency."
                     )
 
