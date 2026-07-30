@@ -9,14 +9,17 @@ derived from cathode ray tube and organic light-emitting diode devices and (2) r
 permeate outlet of a membrane-based separation for the recovery of cobalt ions from an acidic solution representative of lithium-ion 
 battery leachate.
 
-The data used in both case studies are stored in the `Data` and `Raw_data` folders. The soft sensors conductivity prediction for the 
-first case study are in the `single_salt_conductivity.ipynb`, `binary_salt_conductivity.ipynb`, and `ternary_salt_experiments.ipynb` 
-files, with figures stored in the `Single_salt`, `Binary_salts`, and `Ternary_salts` folders, respectively. Lastly, the ion concentration 
-estimates of the soft sensors in the second case study are in the `soft_sensor_membrane_sep.ipynb` file, with the figures stored in the 
-`Li_Co` folder. 
+The data used in both case studies are stored in the `Data` and `Raw_data` folders. The Jupyter Notebook files in this repository 
+use the `Data` folder. The soft sensors conductivity prediction for the first case study are in the `single_salt_conductivity.ipynb`, `binary_salt_conductivity.ipynb`, and `ternary_salt_experiments.ipynb` files, with figures stored in the `Single_salt`, 
+`Binary_salts`, and `Ternary_salts` folders, respectively. Conductivity predictions for extreme binary salt mixtures are stored in 
+the `extreme_binary_conductivity.ipynb` file. Lastly, the ion concentration estimates of the soft sensors in the second case study 
+are in the `soft_sensor_membrane_sep.ipynb` file, with the figures stored in the `Li_Co` folder. 
 
-`conductivity.py` holds the Shedlovsky and mean spherical approximation models for conductivity predictions. The codes were run on 
-Python 3.10.14. Conductivity sensor calibration is performed in the `probe_calibration.ipynb` file.
+`conductivity.py` holds the Shedlovsky and mean spherical approximation models for conductivity predictions. Conductivity sensor 
+calibration is performed in the `probe_calibration.ipynb` file. Regression of the temperature-compensation coefficient of the 
+conductivity sensor is performed in the `temp_compensation_coeff.ipynb` file.
+
+The codes were run on Python 3.10.14. 
 
 The following section describes how to set up an environment capable of solving these problems.
 
